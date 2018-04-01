@@ -4,8 +4,8 @@ module FantasyLineupManager
   MAX_RETRY = 10
 
   class Bot
-    def initialize
-      @bot = Capybara::Session.new(:chrome)
+    def initialize(bot = nil)
+      @bot = bot || Capybara::Session.new(:chrome)
     end
 
     def login(username, password)
@@ -31,9 +31,8 @@ module FantasyLineupManager
     end
 
     def process_teams
-      @bot.visit(@links.first + '&scoringPeriodId=1&pnc=off')
-      @bot.find(:xpath, "//table[@id='playertable_0']/tbody").all("tr")[3].all("td")
-      binding.pry
+      @bot.visit(@links.first + '&pnc=off')
+      PlayerBot.new(@bot).process_players
     end
   end
 end
