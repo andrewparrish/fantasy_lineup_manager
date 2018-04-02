@@ -2,12 +2,13 @@ require 'fantasy_lineup_manager/bot'
 
 module FantasyLineupManager
   class PlayerBot < Bot
-
+    PLAYER_TABLE_XPATH = "//table[@id='playertable_0']/tbody"
     HEADER_ROW_FIRST_COL = 'SLOT'
-
+    HEADER_ROW = 1
+    PLAYER_START_ROW = 2
     LAST_PRE_STATS_COL = 'STATUS ET'
     FIRST_POST_STATS_COL = 'PR15'
-
+    FINAL_STATS_ROW = 'TOTALS'
     ROW_INDEX_MAPPING = [
         :position,
         :name,
@@ -23,10 +24,11 @@ module FantasyLineupManager
     end
 
     def process_players
-      @bot.find(:xpath, "//table[@id='playertable_0']/tbody").all("tr").each do |tr|
-        process_header_row(tr.all('td')) if header_row?(tr.all('td'))
+      process_header_row(@bot.find(:xpath, PLAYER_TABLE_XPATH).all("tr")[HEADER_ROW].all('td'))
+      # TODO - custom each yield method
+      @players = @bot.find(:xpath, PLAYER_TABLE_XPATH).all("tr")[PLAYER_START_ROW..-1].map do |tr|
         process_player(tr.all("td"))
-      end
+      end.reject(&:nil?)
     end
 
     private
@@ -48,6 +50,25 @@ module FantasyLineupManager
     end
 
     def process_player(player_row)
+      return nil if player_row[2].text == FINAL_STATS_ROW
+      stats = {}
+      @stats_mapping.each do |index, v|
+        stats[v] = player_row[index].text
+      end
+
+      Player.new(player_hash(player_row, stats))
+    end
+
+    def player_hash(player_row, stats)
+      hash = {}
+      ROW_INDEX_MAPPING.each_with_index do |key, index|
+        next if key.nil?
+        hash[key] = player_row[index].text
+      end
+
+      # TODO: place to use .tap?
+      hash[:stats] = stats
+      hash
     end
   end
 end

@@ -1,6 +1,7 @@
 require "fantasy_lineup_manager/version"
 require 'fantasy_lineup_manager/bot'
 require 'fantasy_lineup_manager/player_bot'
+require 'fantasy_lineup_manager/player'
 
 module FantasyLineupManager
   def self.manage_lineup
