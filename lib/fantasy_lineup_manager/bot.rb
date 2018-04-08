@@ -27,7 +27,8 @@ module FantasyLineupManager
 
     def process_teams
       @bot.visit(@links.first + '&pnc=off')
-      PlayerBot.new(@bot).process_players
+      players = PlayerBot.new(@bot).process_players
+      binding.pry
     end
 
     private

@@ -26,8 +26,11 @@ module FantasyLineupManager
     def process_players
       process_header_row(@bot.find(:xpath, PLAYER_TABLE_XPATH).all("tr")[HEADER_ROW].all('td'))
       # TODO - custom each yield method
+      index = PLAYER_START_ROW
       @players = @bot.find(:xpath, PLAYER_TABLE_XPATH).all("tr")[PLAYER_START_ROW..-1].map do |tr|
-        process_player(tr.all("td"))
+        player = process_player(tr.all("td"), index)
+        index += 1
+        player
       end.reject(&:nil?)
     end
 
@@ -49,14 +52,14 @@ module FantasyLineupManager
       end
     end
 
-    def process_player(player_row)
+    def process_player(player_row, row_index)
       return nil if player_row[2].text == FINAL_STATS_ROW
       stats = {}
       @stats_mapping.each do |index, v|
         stats[v] = player_row[index].text
       end
 
-      Player.new(player_hash(player_row, stats))
+      Player.new(player_hash(player_row, stats).merge(index: row_index))
     end
 
     def player_hash(player_row, stats)
