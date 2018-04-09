@@ -7,5 +7,8 @@ gem 'capybara'
 gem 'nokogiri'
 gem 'pry'
 
+group :test do
+  gem 'rspec'
+end
 # Specify your gem's dependencies in fantasy_lineup_manager.gemspec
 gemspec

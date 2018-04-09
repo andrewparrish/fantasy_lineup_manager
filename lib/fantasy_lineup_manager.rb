@@ -1,6 +1,6 @@
 require "fantasy_lineup_manager/version"
-require 'fantasy_lineup_manager/bots/bots'
-require 'fantasy_lineup_manager/player'
+require 'fantasy_lineup_manager/bots'
+require 'fantasy_lineup_manager/models'
 
 module FantasyLineupManager
 
