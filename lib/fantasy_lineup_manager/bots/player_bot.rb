@@ -17,16 +17,12 @@ module FantasyLineupManager
           nil
       ]
 
-      def initialize(bot)
-        super(bot)
-        @stats_mapping = {}
-      end
-
       def process_players
+        @stats_mapping = {}
         process_header_row(@session.find(:xpath, PLAYER_TABLE_XPATH).all("tr")[HEADER_ROW].all('td'))
         # TODO - custom each yield method
         index = PLAYER_START_ROW
-        @players = @session.find(:xpath, PLAYER_TABLE_XPATH).all("tr")[PLAYER_START_ROW..-1].map do |tr|
+        @session.find(:xpath, PLAYER_TABLE_XPATH).all("tr")[PLAYER_START_ROW..-1].map do |tr|
           player = process_player(tr.all("td"), index)
           index += 1
           player

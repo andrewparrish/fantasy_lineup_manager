@@ -12,6 +12,15 @@ module FantasyLineupManager
 
       def initialize
         @bot = FantasyLineupManager::Bots::Bot.instance
+        setup_data
+      end
+
+      private
+
+      def setup_data
+        login
+        @team_links = get_team_links
+        @players = @team_links.flat_map  { |link| process_team(link) }
       end
     end
   end

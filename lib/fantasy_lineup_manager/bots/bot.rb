@@ -11,11 +11,13 @@ module FantasyLineupManager
       include LoginBot
       include PlayerBot
       include TeamPageBot
+      include HomepageBot
 
       MAX_RETRY = 10
 
       def initialize
         @session = Capybara::Session.new(:chrome)
+        @stats_mapping = {}
       end
 
       protected

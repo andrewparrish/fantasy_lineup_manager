@@ -18,6 +18,8 @@ module FantasyLineupManager
       @team = data[2].strip
       @name = data[1]
       @positions = data[3].split(',').map(&:strip).map { |pos| pos.match(/(\w{1,2})\s?S?/)[1] }
+    rescue => e
+      binding.pry
     end
   end
 end
