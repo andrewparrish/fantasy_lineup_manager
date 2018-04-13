@@ -1,6 +1,6 @@
 module FantasyLineupManager
   module Bots
-    class LoginBot < Bot
+    module LoginBot
       def login(username, password)
         @session.visit('http://www.espn.com/login')
         wait_until_loaded("//*[@id='disneyid-iframe']")

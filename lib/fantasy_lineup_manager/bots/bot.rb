@@ -1,12 +1,21 @@
 require 'fantasy_lineup_manager/bot_config'
+require 'fantasy_lineup_manager/bots/login_bot'
+require 'fantasy_lineup_manager/bots/homepage_bot'
+require 'fantasy_lineup_manager/bots/team_page_bot'
+require 'fantasy_lineup_manager/bots/player_bot'
 
 module FantasyLineupManager
   module Bots
     class Bot
+      include Singleton
+      include LoginBot
+      include PlayerBot
+      include TeamPageBot
+
       MAX_RETRY = 10
 
-      def initialize(session = nil)
-        @session = session || Capybara::Session.new(:chrome)
+      def initialize
+        @session = Capybara::Session.new(:chrome)
       end
 
       protected

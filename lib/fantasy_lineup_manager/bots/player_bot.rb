@@ -1,6 +1,6 @@
 module FantasyLineupManager
   module Bots
-    class PlayerBot < Bot
+    module PlayerBot
       PLAYER_TABLE_XPATH = "//table[@id='playertable_0']/tbody"
       HEADER_ROW_FIRST_COL = 'SLOT'
       HEADER_ROW = 1
