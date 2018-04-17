@@ -26,7 +26,7 @@ module FantasyLineupManager
           player = process_player(tr.all("td"), index)
           index += 1
           player
-        end.reject(&:nil?)
+        end.reject(&:nil?).reject(&:invalid?)
       end
 
       private
@@ -58,7 +58,7 @@ module FantasyLineupManager
       end
 
       def player_hash(player_row, stats)
-        hash = {}
+        hash = { batter: true }
         ROW_INDEX_MAPPING.each_with_index do |key, index|
           next if key.nil?
           hash[key] = player_row[index].text

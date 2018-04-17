@@ -8,7 +8,7 @@ module FantasyLineupManager
       include AccountManager
       include PlayersManager
 
-      attr_reader :players, :dates, :team_links
+      attr_reader :dates, :team_links, :leagues
 
       def initialize
         @bot = FantasyLineupManager::Bots::Bot.instance
@@ -20,7 +20,16 @@ module FantasyLineupManager
       def setup_data
         login
         @team_links = get_team_links
-        @players = @team_links.flat_map  { |link| process_team(link) }
+        @leagues = @team_links.map { |link| Models::League.new(league_data(link)) }
+      end
+
+      def league_data(link)
+        players = process_team(link)
+        {
+            players: players,
+            slots: slots,
+            link: link
+        }
       end
     end
   end

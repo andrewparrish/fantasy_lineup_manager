@@ -12,6 +12,10 @@ module FantasyLineupManager
       def get_players(team_link)
         @players = @bot.go_to_team(team_link).process_players
       end
+
+      def slots
+        @players.reject(&:inactive?).map(&:current_position)
+      end
     end
   end
 end
