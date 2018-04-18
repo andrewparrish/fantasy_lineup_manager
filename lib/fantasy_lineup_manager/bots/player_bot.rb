@@ -1,7 +1,8 @@
 module FantasyLineupManager
   module Bots
     module PlayerBot
-      PLAYER_TABLE_XPATH = "//table[@id='playertable_0']/tbody"
+      BATTER_TABLE_XPATH = "//table[@id='playertable_0']/tbody"
+      PITCHER_TABLE_XPATH = "//table[@id='playertable_1']/tbody"
       HEADER_ROW_FIRST_COL = 'SLOT'
       HEADER_ROW = 1
       PLAYER_START_ROW = 2
@@ -18,18 +19,22 @@ module FantasyLineupManager
       ]
 
       def process_players
+        process_player_table(BATTER_TABLE_XPATH, true) + process_player_table(PITCHER_TABLE_XPATH)
+      end
+
+      private
+
+      def process_player_table(table_xpath, batter=false)
         @stats_mapping = {}
-        process_header_row(@session.find(:xpath, PLAYER_TABLE_XPATH).all("tr")[HEADER_ROW].all('td'))
-        # TODO - custom each yield method
+        process_header_row(@session.find(:xpath, table_xpath).all("tr")[HEADER_ROW].all('td'))
         index = PLAYER_START_ROW
-        @session.find(:xpath, PLAYER_TABLE_XPATH).all("tr")[PLAYER_START_ROW..-1].map do |tr|
-          player = process_player(tr.all("td"), index)
+        # TODO - custom each yield method
+        @session.find(:xpath, table_xpath).all("tr")[PLAYER_START_ROW..-1].map do |tr|
+          player = process_player(tr.all("td"), index, batter)
           index += 1
           player
         end.reject(&:nil?).reject(&:invalid?)
       end
-
-      private
 
       def header_row?(row)
         row[0].text == HEADER_ROW_FIRST_COL
@@ -47,18 +52,18 @@ module FantasyLineupManager
         end
       end
 
-      def process_player(player_row, row_index)
+      def process_player(player_row, row_index, batter=false)
         return nil if player_row[2].text == FINAL_STATS_ROW
         stats = {}
         @stats_mapping.each do |index, v|
           stats[v] = player_row[index].text
         end
 
-        Player.new(player_hash(player_row, stats).merge(index: row_index))
+        Player.new(player_hash(player_row, stats, batter).merge(index: row_index))
       end
 
-      def player_hash(player_row, stats)
-        hash = { batter: true }
+      def player_hash(player_row, stats, batter)
+        hash = { batter: batter }
         ROW_INDEX_MAPPING.each_with_index do |key, index|
           next if key.nil?
           hash[key] = player_row[index].text

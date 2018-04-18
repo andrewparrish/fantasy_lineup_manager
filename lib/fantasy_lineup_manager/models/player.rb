@@ -22,6 +22,14 @@ module FantasyLineupManager
       @positions = data[3].split(',').map(&:strip).map { |pos| pos.match(/(\w{1,2})\s?S?/)[1] }
     end
 
+    def batter?
+      @batter
+    end
+
+    def pitcher?
+      !batter?
+    end
+
     def invalid?
       @name.nil?
     end
