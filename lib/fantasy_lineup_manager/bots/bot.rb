@@ -22,13 +22,15 @@ module FantasyLineupManager
 
       protected
 
-      def wait_until_loaded(xpath)
+      def wait_until_loaded(xpath, max_retry=nil)
         count = 0
         until @session.has_xpath?(xpath) do
           sleep(1)
-          count + 1
-          break if count > MAX_RETRY
+          count += 1
+          puts "Tried #{count} times to find xpath."
+          return false if count > (max_retry || MAX_RETRY)
         end
+        true
       end
     end
   end

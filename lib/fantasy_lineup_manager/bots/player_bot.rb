@@ -2,7 +2,8 @@ module FantasyLineupManager
   module Bots
     module PlayerBot
       BATTER_TABLE_XPATH = "//table[@id='playertable_0']/tbody"
-      PITCHER_TABLE_XPATH = "//table[@id='playertable_1']/tbody"
+      PITCHER_TABLE_XPATH = BATTER_TABLE_XPATH.gsub('0', '1')
+      DATES_XPATH = "//*[@id='content']/div/div[4]/div/div/div[3]/div[1]/div[5]/ul/li/a"
       HEADER_ROW_FIRST_COL = 'SLOT'
       HEADER_ROW = 1
       PLAYER_START_ROW = 2
@@ -17,9 +18,20 @@ module FantasyLineupManager
           :game_status,
           nil
       ]
+      SCORING_PERIOD = /scoringPeriodId=(\d+)/
 
       def process_players
         process_player_table(BATTER_TABLE_XPATH, true) + process_player_table(PITCHER_TABLE_XPATH)
+      end
+
+      def process_dates
+        @session.all(:xpath, DATES_XPATH).map do |a|
+          begin
+            Models::LineupDate.new(a.text, a[:href].match(SCORING_PERIOD)[1])
+          rescue => e
+            binding.pry
+          end
+        end
       end
 
       private

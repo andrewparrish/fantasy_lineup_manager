@@ -2,7 +2,14 @@ module FantasyLineupManager
   module Managers
     module PlayersManager
       def process_team(team_link)
-        get_players(team_link)
+        {
+            players: get_players(team_link),
+        }
+      end
+
+
+      def process_dates(team_link)
+        @dates ||= @bot.go_to_team(team_link).process_dates
       end
 
       def get_team_links
@@ -13,9 +20,13 @@ module FantasyLineupManager
         @players = @bot.go_to_team(team_link).process_players
       end
 
+
       def slots
         @players.reject(&:inactive?).map(&:current_position)
       end
+
+      private
+
     end
   end
 end
