@@ -6,7 +6,7 @@ module FantasyLineupManager
     attr_reader :stats, :name, :index, :current_position
 
     def initialize(index:, name:, position:, opponent:, game_status:, stats:, batter:)
-      self.name = name unless name == ''
+      self.name = name unless name.strip == ''
       @current_position = position
       @opponent = opponent
       @game_status = game_status
