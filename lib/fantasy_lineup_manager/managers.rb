@@ -24,6 +24,7 @@ module FantasyLineupManager
       def swap_positions_example
         league = leagues[0]
         date = dates[1]
+        binding.pry
         player1 = league.current_team.players[4].index
         player2 = league.current_team.players[10].index
         players = {}
