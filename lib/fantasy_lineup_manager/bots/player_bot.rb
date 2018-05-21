@@ -19,6 +19,7 @@ module FantasyLineupManager
           nil
       ]
       SCORING_PERIOD = /scoringPeriodId=(\d+)/
+      SUBMIT_BUTTON_XPATH = "//*[@id='playerTableFramedForm']/div[1]/input"
 
       def process_players
         process_player_table(BATTER_TABLE_XPATH, true) + process_player_table(PITCHER_TABLE_XPATH)
@@ -26,12 +27,21 @@ module FantasyLineupManager
 
       def process_dates
         @session.all(:xpath, DATES_XPATH).map do |a|
+          Models::LineupDate.new(a.text, a[:href].match(SCORING_PERIOD)[1])
+        end
+      end
+
+      def swap_players(players)
+        players.each do |player_index, position|
           begin
-            Models::LineupDate.new(a.text, a[:href].match(SCORING_PERIOD)[1])
-          rescue => e
-            binding.pry
+            @session.find(:xpath, BATTER_TABLE_XPATH).all("tr")[PLAYER_START_ROW..-1][player_index]
+                    .find("select").select position
+          rescue
+           binding.pry
           end
         end
+
+        @session.find(:xpath, SUBMIT_BUTTON_XPATH).click
       end
 
       private

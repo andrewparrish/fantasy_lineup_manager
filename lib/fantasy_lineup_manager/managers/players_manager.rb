@@ -20,13 +20,13 @@ module FantasyLineupManager
         @players = @bot.go_to_team(team_link).process_players
       end
 
-
       def slots
         @players.reject(&:inactive?).map(&:current_position)
       end
 
-      private
-
+      def swap_player_positions(link, players)
+        @bot.go_to_team(link).swap_players(players)
+      end
     end
   end
 end

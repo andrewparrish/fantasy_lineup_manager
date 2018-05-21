@@ -10,6 +10,10 @@ module FantasyLineupManager
         @slots = slots
         @teams = []
       end
+
+      def link_for_date(lineup_date)
+        @link + "&scoringPeriodId=#{lineup_date.scoring_period}"
+      end
     end
   end
 end

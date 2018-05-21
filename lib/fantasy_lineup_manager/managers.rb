@@ -8,7 +8,7 @@ module FantasyLineupManager
       include AccountManager
       include PlayersManager
 
-      attr_reader :leagues
+      attr_reader :leagues, :dates
 
       def initialize
         @bot = FantasyLineupManager::Bots::Bot.instance
@@ -17,7 +17,19 @@ module FantasyLineupManager
       end
 
       def swap_positions(league, date, players)
-        
+        swap_player_positions(league.link_for_date(date), players)
+      end
+
+      # TODO : For example only
+      def swap_positions_example
+        league = leagues[0]
+        date = dates[1]
+        player1 = league.current_team.players[4].index
+        player2 = league.current_team.players[10].index
+        players = {}
+        players[player1] = 'Bench'
+        players[player2] = 'SS'
+        swap_positions(league, date, players)
       end
 
       private
