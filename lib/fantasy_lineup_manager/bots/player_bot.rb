@@ -34,9 +34,9 @@ module FantasyLineupManager
       def swap_players(players)
         players.each do |player_index, position|
           begin
-            @session.find(:xpath, BATTER_TABLE_XPATH).all("tr")[PLAYER_START_ROW..-1][player_index]
-                    .find("select").select position
-          rescue
+            # TODO: NEED TO SUPPORT PITCHERS AS WELL
+            player_rows(BATTER_TABLE_XPATH)[player_index].find("select").select position
+          rescue => e
            binding.pry
           end
         end
@@ -46,12 +46,18 @@ module FantasyLineupManager
 
       private
 
+      def player_rows(table_xpath)
+        @session.find(:xpath, table_xpath).all("tr")[PLAYER_START_ROW..-1].reject do |tre|
+          tre[:class].include?('playerTableBgRowTotals')
+        end
+      end
+
       def process_player_table(table_xpath, batter=false)
         @stats_mapping = {}
         process_header_row(@session.find(:xpath, table_xpath).all("tr")[HEADER_ROW].all('td'))
-        index = PLAYER_START_ROW
+        index = 0
         # TODO - custom each yield method
-        @session.find(:xpath, table_xpath).all("tr")[PLAYER_START_ROW..-1].map do |tr|
+        player_rows(table_xpath).map do |tr|
           player = process_player(tr.all("td"), index, batter)
           index += 1
           player
